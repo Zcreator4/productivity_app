@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/login.dart';
 import 'package:productivity_app/signup.dart';
+import 'package:productivity_app/theme_changer.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -96,6 +97,15 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
+                // test button
+                // MaterialButton(
+                //   minWidth: double.infinity,
+                //   height: 60,
+                //   onPressed: () {
+                //     Navigator.push(context,
+                //         MaterialPageRoute(builder: (context) => MyApp()));
+                //   },
+                // ),
               ],
             )
           ],

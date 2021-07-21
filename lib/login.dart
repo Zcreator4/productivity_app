@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:productivity_app/calendar_page.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -68,7 +69,12 @@ class LoginPage extends StatelessWidget {
                     child: MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CalendarPage()));
+                      },
                       color: Color(0xff0095ff),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -165,13 +171,13 @@ Widget inputFile({label, obscureText = false}) {
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey[400],
-            ),
+                // color: Colors.grey[400],
+                ),
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey[400],
-            ),
+                // color: Colors.grey[400],
+                ),
           ),
         ),
       ),

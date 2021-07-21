@@ -116,12 +116,12 @@ Widget inputFile({label, obscureText = false}) {
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey[400],
+              color: Color(0xFFBDBDBD),
             ),
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.grey[400],
+              color: Color(0xFFBDBDBD),
             ),
           ),
         ),
