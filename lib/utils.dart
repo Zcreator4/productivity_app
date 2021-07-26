@@ -15,7 +15,7 @@ class Utils {
   }
 
   static String toTime(DateTime dateTime) {
-    final time = DateFormat.yMMMEd().format(dateTime);
+    final time = DateFormat.Hm().format(dateTime);
 
     return '$time';
   }
