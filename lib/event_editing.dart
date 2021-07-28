@@ -19,8 +19,10 @@ class EventEditingPage extends StatefulWidget {
 class _EventEditingPageState extends State<EventEditingPage> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
   late DateTime fromDate;
   late DateTime toDate;
+  bool isAllDay = false;
 
   @override
   void initState() {
@@ -29,12 +31,21 @@ class _EventEditingPageState extends State<EventEditingPage> {
     if (widget.event == null) {
       fromDate = DateTime.now();
       toDate = DateTime.now().add(Duration(hours: 2));
+    } else {
+      final event = widget.event!;
+
+      titleController.text = event.title;
+      descriptionController.text = event.description;
+      fromDate = event.from;
+      toDate = event.to;
+      isAllDay = event.isAllDay;
     }
   }
 
   @override
   void dispose() {
     titleController.dispose();
+    descriptionController.dispose();
 
     super.dispose();
   }
@@ -53,10 +64,10 @@ class _EventEditingPageState extends State<EventEditingPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 buildTitle(),
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 buildDateTimePickers(),
+                SizedBox(height: 12),
+                buildDescription(),
               ],
             ),
           ),
@@ -87,10 +98,28 @@ class _EventEditingPageState extends State<EventEditingPage> {
         controller: titleController,
       );
 
+  Widget buildDescription() => TextFormField(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: 'Add Details',
+        ),
+        textInputAction: TextInputAction.newline,
+        maxLines: 5,
+        onFieldSubmitted: (_) => saveForm(),
+        controller: descriptionController,
+      );
+
   Widget buildDateTimePickers() => Column(
         children: [
           buildFrom(),
-          buildTo(),
+          if (!isAllDay) buildTo(),
+          CheckboxListTile(
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text('All Day Event'),
+            value: isAllDay,
+            activeColor: Theme.of(context).primaryColor,
+            onChanged: (value) => setState(() => isAllDay = value!),
+          )
         ],
       );
 
@@ -100,17 +129,18 @@ class _EventEditingPageState extends State<EventEditingPage> {
           children: [
             Expanded(
               flex: 2,
-              child: buildDropDownField(
+              child: buildDropdownField(
                 text: Utils.toDate(fromDate),
                 onClicked: () => pickFromDateTime(pickDate: true),
               ),
             ),
-            Expanded(
-              child: buildDropDownField(
-                text: Utils.toTime(fromDate),
-                onClicked: () => pickFromDateTime(pickDate: false),
+            if (!isAllDay)
+              Expanded(
+                child: buildDropdownField(
+                  text: Utils.toTime(fromDate),
+                  onClicked: () => pickFromDateTime(pickDate: false),
+                ),
               ),
-            )
           ],
         ),
       );
@@ -121,19 +151,44 @@ class _EventEditingPageState extends State<EventEditingPage> {
           children: [
             Expanded(
               flex: 2,
-              child: buildDropDownField(
+              child: buildDropdownField(
                 text: Utils.toDate(toDate),
                 onClicked: () => pickToDateTime(pickDate: true),
               ),
             ),
             Expanded(
-              child: buildDropDownField(
+              child: buildDropdownField(
                 text: Utils.toTime(toDate),
                 onClicked: () => pickToDateTime(pickDate: false),
               ),
-            )
+            ),
           ],
         ),
+      );
+
+  Widget buildHeader({
+    required String header,
+    required Widget child,
+  }) =>
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(header, style: TextStyle(fontWeight: FontWeight.bold)),
+            child,
+          ],
+        ),
+      );
+
+  Widget buildDropdownField({
+    required String text,
+    required VoidCallback onClicked,
+  }) =>
+      ListTile(
+        title: Text(text),
+        trailing: Icon(Icons.arrow_drop_down),
+        onTap: onClicked,
       );
 
   Future pickFromDateTime({required bool pickDate}) async {
@@ -141,7 +196,8 @@ class _EventEditingPageState extends State<EventEditingPage> {
     if (date == null) return;
 
     if (date.isAfter(toDate)) {
-      toDate = DateTime(date.year, date.month, date.day);
+      toDate =
+          DateTime(date.year, date.month, date.day, toDate.hour, toDate.minute);
     }
 
     setState(() => fromDate = date);
@@ -193,45 +249,28 @@ class _EventEditingPageState extends State<EventEditingPage> {
     }
   }
 
-  Widget buildDropDownField({
-    required String text,
-    required VoidCallback onClicked,
-  }) =>
-      ListTile(
-        title: Text(text),
-        trailing: Icon(Icons.arrow_drop_down),
-        onTap: onClicked,
-      );
-
-  Widget buildHeader({
-    required String header,
-    required Widget child,
-  }) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            header,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          child,
-        ],
-      );
-
   Future saveForm() async {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
       final event = Event(
         title: titleController.text,
-        description: 'Description',
+        description: descriptionController.text,
         from: fromDate,
-        to: toDate,
-        isAllDay: false,
+        to: isAllDay ? fromDate : toDate,
+        isAllDay: isAllDay,
       );
 
+      final isEditing = widget.event != null;
       final provider = Provider.of<EventProvider>(context, listen: false);
-      provider.addEvent(event);
+
+      if (isEditing) {
+        provider.editEvent(event, widget.event!);
+
+        Navigator.of(context).pop();
+      } else {
+        provider.addEvent(event);
+      }
 
       Navigator.of(context).pop();
     }

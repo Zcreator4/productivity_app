@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/login.dart';
 import 'package:productivity_app/signup.dart';
-import 'package:productivity_app/theme_changer.dart';
 
 void main() {
   runApp(MaterialApp(
