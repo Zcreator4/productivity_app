@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:productivity_app/event_provider.dart';
 import 'package:productivity_app/login.dart';
 import 'package:productivity_app/signup.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: HomePage(),
+  runApp(ChangeNotifierProvider(
+    create: (context) => EventProvider(),
+    child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+    ),
   ));
 }
 
