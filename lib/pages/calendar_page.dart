@@ -6,6 +6,7 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
+          // sign out page
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);

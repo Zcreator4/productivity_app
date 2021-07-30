@@ -4,18 +4,29 @@ import 'package:productivity_app/pages/login.dart';
 import 'package:productivity_app/services/auth.dart';
 
 class SignUpPage extends StatefulWidget {
-  String email = '';
-  String password = '';
-  final _formKey = GlobalKey<FormState>();
-  AuthService _auth = AuthService();
-
   SignUpPage({Key? key}) : super(key: key);
+  final _formKey = GlobalKey<FormState>();
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  AuthService _auth = AuthService();
+  String email = '';
+  String password = '';
+  void submitForm() {
+    setState(() {
+      dynamic result = _auth.registerFirebaseUser(email, password);
+    });
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => LoginPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,14 +81,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     CustomTextField(
                       label: 'Email',
                       onpressed: (val) {
-                        setState(() => widget.email = val.trim());
+                        setState(() => email = val.trim());
                       },
                     ),
                     CustomTextField(
                       label: 'Password',
                       obscureText: true,
                       onpressed: (val) {
-                        setState(() => widget.email = val.trim());
+                        setState(() => password = val.trim());
                       },
                     ),
                   ],
@@ -90,13 +101,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: MaterialButton(
                     minWidth: double.infinity,
                     height: 60,
-                    onPressed: () async {
-                      if (widget._formKey.currentState!.validate()) {
-                        //tries to create a new login
-                        dynamic result = await widget._auth
-                            .registerFirebaseUser(
-                                widget.email, widget.password);
-                      }
+                    onPressed: () {
+                      submitForm();
                     },
                     color: Color(0xff0095ff),
                     elevation: 0,
@@ -247,7 +253,7 @@ class _SignUpPageState extends State<SignUpPage> {
 class CustomTextField extends StatefulWidget {
   final String label;
   bool obscureText;
-  var onpressed;
+  Function(String)? onpressed;
 
   CustomTextField(
       {required this.label, this.obscureText = false, required this.onpressed});
@@ -270,7 +276,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         SizedBox(
           height: 5,
         ),
-        TextField(
+        TextFormField(
           onChanged: widget.onpressed,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
