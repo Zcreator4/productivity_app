@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:productivity_app/event.dart';
-import 'package:productivity_app/event_editing.dart';
-import 'package:productivity_app/event_provider.dart';
+import 'package:productivity_app/models/event.dart';
+import 'package:productivity_app/pages/event_editing.dart';
+import 'package:productivity_app/providers/event_provider.dart';
 import 'package:productivity_app/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +17,7 @@ class EventViewingPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           leading: CloseButton(),
+          backgroundColor: Color(0xFF76D5FC),
           actions: buildViewingActions(context, event),
         ),
         body: ListView(

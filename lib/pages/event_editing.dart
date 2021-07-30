@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:productivity_app/event.dart';
-import 'package:productivity_app/event_provider.dart';
+import 'package:productivity_app/models/event.dart';
+import 'package:productivity_app/providers/event_provider.dart';
 import 'package:productivity_app/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -53,6 +53,7 @@ class _EventEditingPageState extends State<EventEditingPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFF76D5FC),
           leading: CloseButton(),
           actions: buildEditingActions(),
         ),

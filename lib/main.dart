@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:productivity_app/event_provider.dart';
-import 'package:productivity_app/login.dart';
-import 'package:productivity_app/signup.dart';
+import 'package:productivity_app/pages/loading_page.dart';
+import 'package:productivity_app/providers/event_provider.dart';
+import 'package:productivity_app/pages/login.dart';
+import 'package:productivity_app/services/auth.dart';
+import 'package:productivity_app/pages/signup.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -14,7 +17,81 @@ void main() {
   ));
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _initialized = false;
+  bool _error = false;
+
+  void initializedFlutterFire() async {
+    try {
+      await Firebase.initializeApp();
+      setState(() {
+        _initialized = true;
+      });
+    } catch (e) {
+      print(e.toString());
+      _error = true;
+    }
+  }
+
+  @override
+  void initState() {
+    initializedFlutterFire();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_error) {
+      return Container(
+        child: Text("Failed to Connect to servers"),
+      );
+    }
+
+    if (!_initialized) {
+      return Container(
+        child: Text("Connecting"),
+      );
+    }
+    return Streamer();
+  }
+}
+
+class Streamer extends StatefulWidget {
+  const Streamer({Key? key}) : super(key: key);
+
+  @override
+  _StreamerState createState() => _StreamerState();
+}
+
+class _StreamerState extends State<Streamer> {
+  final _streamProvider = AuthService().user;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: StreamBuilder(
+          stream: _streamProvider,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.data == null) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? LoadingPage()
+                  : LandingPage();
+            } else {
+              return LandingPage();
+            }
+          }),
+    );
+  }
+}
+
+class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +163,7 @@ class HomePage extends StatelessWidget {
                   height: 60,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignUpPge()));
+                        MaterialPageRoute(builder: (context) => SignUpPage()));
                   },
                   color: Color(0xff0095ff),
                   shape: RoundedRectangleBorder(

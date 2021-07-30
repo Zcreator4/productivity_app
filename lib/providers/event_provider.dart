@@ -35,7 +35,7 @@
 // }
 
 import 'package:flutter/cupertino.dart';
-import 'package:productivity_app/event.dart';
+import 'package:productivity_app/models/event.dart';
 import 'package:productivity_app/utils.dart';
 
 class EventProvider extends ChangeNotifier {

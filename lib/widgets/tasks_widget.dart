@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:productivity_app/event_data_source.dart';
-import 'package:productivity_app/event_provider.dart';
-import 'package:productivity_app/event_viewing_page.dart';
+import 'package:productivity_app/models/event_data_source.dart';
+import 'package:productivity_app/providers/event_provider.dart';
+import 'package:productivity_app/pages/event_viewing_page.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
