@@ -39,7 +39,7 @@ import 'package:productivity_app/models/event.dart';
 import 'package:productivity_app/utils.dart';
 
 class EventProvider extends ChangeNotifier {
-  final List<Event> _events = [];
+  final List<AppEvent> _events = [];
 
   DateTime _selectedDate = DateTime.now();
 
@@ -47,7 +47,7 @@ class EventProvider extends ChangeNotifier {
 
   void setDate(DateTime date) => _selectedDate = date;
 
-  List<Event> get eventsOfSelectedDate => _events.where(
+  List<AppEvent> get eventsOfSelectedDate => _events.where(
         (event) {
           final selected = Utils.removeTime(_selectedDate);
           final from = Utils.removeTime(event.from);
@@ -59,21 +59,21 @@ class EventProvider extends ChangeNotifier {
         },
       ).toList();
 
-  List<Event> get events => _events;
+  List<AppEvent> get events => _events;
 
-  void addEvent(Event event) {
+  void addEvent(AppEvent event) {
     _events.add(event);
 
     notifyListeners();
   }
 
-  void deleteEvent(Event event) {
+  void deleteEvent(AppEvent event) {
     _events.remove(event);
 
     notifyListeners();
   }
 
-  void editEvent(Event newEvent, Event oldEvent) {
+  void editEvent(AppEvent newEvent, AppEvent oldEvent) {
     final index = _events.indexOf(oldEvent);
     _events[index] = newEvent;
 

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:productivity_app/pages/calendar_page.dart';
 import 'package:productivity_app/pages/loading_page.dart';
 import 'package:productivity_app/providers/event_provider.dart';
 import 'package:productivity_app/pages/login.dart';
@@ -84,7 +85,7 @@ class _StreamerState extends State<Streamer> {
                   ? LoadingPage()
                   : LandingPage();
             } else {
-              return LandingPage();
+              return CalendarPage(currentUser: snapshot.data);
             }
           }),
     );
@@ -195,3 +196,5 @@ class LandingPage extends StatelessWidget {
     ));
   }
 }
+
+// 1JW7Y2nwBze1HxxR8wtisR8zum2

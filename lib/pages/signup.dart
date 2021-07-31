@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/pages/loading_page.dart';
+import 'package:productivity_app/pages/loadingpage2.dart';
 import 'package:productivity_app/pages/login.dart';
 import 'package:productivity_app/services/auth.dart';
 
@@ -15,14 +16,14 @@ class _SignUpPageState extends State<SignUpPage> {
   AuthService _auth = AuthService();
   String email = '';
   String password = '';
-  void submitForm() {
+  void submitForm() async {
     setState(() {
       dynamic result = _auth.registerFirebaseUser(email, password);
     });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => LoginPage(),
+        builder: (BuildContext context) => LoadingPage2(),
       ),
     );
   }
@@ -38,9 +39,9 @@ class _SignUpPageState extends State<SignUpPage> {
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            // Navigator.pop(context);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoadingPage()));
+            Navigator.pop(context);
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => LoadingPage()));
           },
           icon: Icon(Icons.arrow_back_ios),
           iconSize: 20,

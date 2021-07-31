@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/models/event.dart';
+import 'package:productivity_app/models/myAppUser.dart';
 import 'package:productivity_app/providers/event_provider.dart';
+import 'package:productivity_app/services/database.dart';
 import 'package:productivity_app/utils.dart';
 import 'package:provider/provider.dart';
 
 class EventEditingPage extends StatefulWidget {
-  final Event? event;
+  final AppEvent? event;
+  MyAppUser currentUser;
 
-  const EventEditingPage({
+  EventEditingPage({
     Key? key,
     this.event,
+    required this.currentUser,
   }) : super(key: key);
 
   @override
@@ -20,6 +24,8 @@ class _EventEditingPageState extends State<EventEditingPage> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final user1Controller = TextEditingController();
+  final user2Controller = TextEditingController();
   late DateTime fromDate;
   late DateTime toDate;
   bool isAllDay = false;
@@ -55,7 +61,7 @@ class _EventEditingPageState extends State<EventEditingPage> {
         appBar: AppBar(
           backgroundColor: Color(0xFF76D5FC),
           leading: CloseButton(),
-          actions: buildEditingActions(),
+          actions: buildEditingActions(widget.currentUser),
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(12),
@@ -69,19 +75,52 @@ class _EventEditingPageState extends State<EventEditingPage> {
                 buildDateTimePickers(),
                 SizedBox(height: 12),
                 buildDescription(),
+                buildUser1(),
+                buildUser2(),
               ],
             ),
           ),
         ),
       );
 
-  List<Widget> buildEditingActions() => [
+  List<Widget> buildEditingActions(currentUser) => [
         ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
             primary: Colors.transparent,
             shadowColor: Colors.transparent,
           ),
-          onPressed: saveForm,
+          onPressed: () async {
+            final isValid = _formKey.currentState!.validate();
+
+            if (isValid) {
+              final event = AppEvent(
+                title: titleController.text,
+                description: descriptionController.text,
+                from: fromDate,
+                to: isAllDay ? fromDate : toDate,
+                isAllDay: isAllDay,
+                eventUsers: [
+                  user1Controller.text,
+                  user2Controller.text,
+                  currentUser.uid
+                ],
+              );
+              await DataService().saveEvents(event);
+              final isEditing = widget.event != null;
+              final provider =
+                  Provider.of<EventProvider>(context, listen: false);
+
+              if (isEditing) {
+                provider.editEvent(event, widget.event!);
+
+                Navigator.of(context).pop();
+              } else {
+                provider.addEvent(event);
+              }
+
+              Navigator.of(context).pop();
+            }
+          },
           icon: Icon(Icons.done),
           label: Text('SAVE'),
         ),
@@ -93,7 +132,6 @@ class _EventEditingPageState extends State<EventEditingPage> {
           border: UnderlineInputBorder(),
           hintText: 'Add Title',
         ),
-        onFieldSubmitted: (_) => saveForm(),
         validator: (title) =>
             title != null && title.isEmpty ? 'Title cannot be empty' : null,
         controller: titleController,
@@ -106,8 +144,27 @@ class _EventEditingPageState extends State<EventEditingPage> {
         ),
         textInputAction: TextInputAction.newline,
         maxLines: 5,
-        onFieldSubmitted: (_) => saveForm(),
         controller: descriptionController,
+      );
+
+  Widget buildUser1() => TextFormField(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: 'User 1 uid',
+        ),
+        textInputAction: TextInputAction.newline,
+        maxLines: 1,
+        controller: user1Controller,
+      );
+
+  Widget buildUser2() => TextFormField(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          hintText: 'User 2 uid',
+        ),
+        textInputAction: TextInputAction.newline,
+        maxLines: 1,
+        controller: user2Controller,
       );
 
   Widget buildDateTimePickers() => Column(
@@ -250,30 +307,36 @@ class _EventEditingPageState extends State<EventEditingPage> {
     }
   }
 
-  Future saveForm() async {
-    final isValid = _formKey.currentState!.validate();
+//   Future saveForm(currentUser) async {
+//     final isValid = _formKey.currentState!.validate();
 
-    if (isValid) {
-      final event = Event(
-        title: titleController.text,
-        description: descriptionController.text,
-        from: fromDate,
-        to: isAllDay ? fromDate : toDate,
-        isAllDay: isAllDay,
-      );
+//     if (isValid) {
+//       final event = AppEvent(
+//         title: titleController.text,
+//         description: descriptionController.text,
+//         from: fromDate,
+//         to: isAllDay ? fromDate : toDate,
+//         isAllDay: isAllDay,
+//         eventUsers: [
+//           user1Controller.text,
+//           user2Controller.text,
+//           currentUser.uid
+//         ],
+//       );
+//       await DataService().saveEvents(event);
+//       final isEditing = widget.event != null;
+//       final provider = Provider.of<EventProvider>(context, listen: false);
 
-      final isEditing = widget.event != null;
-      final provider = Provider.of<EventProvider>(context, listen: false);
+//       if (isEditing) {
+//         provider.editEvent(event, widget.event!);
 
-      if (isEditing) {
-        provider.editEvent(event, widget.event!);
+//         Navigator.of(context).pop();
+//       } else {
+//         provider.addEvent(event);
+//       }
 
-        Navigator.of(context).pop();
-      } else {
-        provider.addEvent(event);
-      }
-
-      Navigator.of(context).pop();
-    }
-  }
+//       Navigator.of(context).pop();
+//     }
+//   }
+// }
 }

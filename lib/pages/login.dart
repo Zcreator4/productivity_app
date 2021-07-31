@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:productivity_app/pages/calendar_page.dart';
 import 'package:productivity_app/pages/signup.dart';
 import 'package:productivity_app/services/auth.dart';
 
@@ -16,16 +15,10 @@ class _LoginPageState extends State<LoginPage> {
   String email = '';
   String password = '';
   AuthService _auth = AuthService();
-  void submitForm() {
+  void submitForm() async {
     setState(() {
       dynamic result = _auth.loginFirebaseUser(email, password);
     });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => CalendarPage(),
-      ),
-    );
   }
 
   @override

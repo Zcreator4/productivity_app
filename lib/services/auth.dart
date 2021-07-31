@@ -5,7 +5,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   MyAppUser? _userFromFirebaseUser(User? user) {
-    user != null ? MyAppUser(uid: user.uid, email: user.email) : null;
+    return user != null ? MyAppUser(uid: user.uid, email: user.email) : null;
   }
 
   Future registerFirebaseUser(String email, String password) async {

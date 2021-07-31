@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/models/event.dart';
-import 'package:productivity_app/pages/event_editing.dart';
 import 'package:productivity_app/providers/event_provider.dart';
 import 'package:productivity_app/utils.dart';
 import 'package:provider/provider.dart';
 
 class EventViewingPage extends StatelessWidget {
-  final Event event;
+  final AppEvent event;
 
   const EventViewingPage({
     Key? key,
@@ -38,7 +37,7 @@ class EventViewingPage extends StatelessWidget {
         ),
       );
 
-  Widget buildDateTime(Event event) {
+  Widget buildDateTime(AppEvent event) {
     return Column(
       children: [
         buildDate(event.isAllDay ? 'All-day' : 'From', event.from),
@@ -62,15 +61,15 @@ class EventViewingPage extends StatelessWidget {
     );
   }
 
-  List<Widget> buildViewingActions(BuildContext context, Event event) => [
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => EventEditingPage(event: event),
-            ),
-          ),
-        ),
+  List<Widget> buildViewingActions(BuildContext context, AppEvent event) => [
+        // IconButton(
+        //   icon: Icon(Icons.edit),
+        //   onPressed: () => Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(
+        //       builder: (context) => EventEditingPage(currentUser: currentUser),
+        //     ),
+        //   ),
+        // ),
         IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {
